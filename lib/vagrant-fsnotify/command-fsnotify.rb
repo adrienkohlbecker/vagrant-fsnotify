@@ -130,7 +130,8 @@ module VagrantPlugins::Fsnotify
             @changes[rel_path] = Time.now.to_i
             folder[:machine].ui.info("fsnotify: Changed: #{rel_path}")
 
-            guestpath = File.join(folder[:opts][:guestpath], rel_path)
+            guestpath = folder[:opts][:override_guestpath] || folder[:opts][:guestpath]
+            guestpath = File.join(guestpath, rel_path)
 
             tosync[folder[:machine]] = [] if !tosync.has_key?(folder[:machine])
             tosync[folder[:machine]] << guestpath
