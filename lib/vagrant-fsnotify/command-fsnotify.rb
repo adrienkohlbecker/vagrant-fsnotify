@@ -5,7 +5,7 @@ module VagrantPlugins::Fsnotify
     include Vagrant::Action::Builtin::MixinSyncedFolders
 
     def execute
-      @logger = Log4r::Logger.new("vagrant::commands::rsync-auto")
+      @logger = Log4r::Logger.new("vagrant::commands::fsnotify")
 
       params = OptionParser.new do |o|
         o.banner = "Usage: vagrant fsnotify [vm-name]"
