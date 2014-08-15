@@ -16,6 +16,7 @@ module VagrantPlugins::Fsnotify
       return if !argv
 
       paths = {}
+      ignores = []
       @changes = {}
 
       with_target_vms do |machine|
@@ -54,6 +55,12 @@ module VagrantPlugins::Fsnotify
               opts: opts
             }
 
+            if opts[:exclude]
+              Array(opts[:exclude]).each do |pattern|
+                ignores << exclude_to_regexp(pattern.to_s)
+              end
+            end
+
           end
 
         end
@@ -67,8 +74,13 @@ module VagrantPlugins::Fsnotify
 
       @logger.info("Listening to paths: #{paths.keys.sort.inspect}")
       @logger.info("Listening via: #{Listen::Adapter.select.inspect}")
+      @logger.info("Ignoring #{ignores.length} paths:")
+      ignores.each do |ignore|
+        @logger.info("  -- #{ignore.to_s}")
+      end
+
       listener_callback = method(:callback).to_proc.curry[paths]
-      listener = Listen.to(*paths.keys, &listener_callback)
+      listener = Listen.to(*paths.keys, ignore: ignores, &listener_callback)
 
       # Create the callback that lets us know when we've been interrupted
       queue    = Queue.new
@@ -136,5 +148,19 @@ module VagrantPlugins::Fsnotify
     rescue => e
       @logger.error("#{e}: #{e.message}")
     end
+
+    def exclude_to_regexp(exclude)
+
+      # This is REALLY ghetto, but its a start. We can improve and
+      # keep unit tests passing in the future.
+      exclude = exclude.gsub("**", "|||GLOBAL|||")
+      exclude = exclude.gsub("*", "|||PATH|||")
+      exclude = exclude.gsub("|||PATH|||", "[^/]*")
+      exclude = exclude.gsub("|||GLOBAL|||", ".*")
+
+      Regexp.new(exclude)
+
+    end
+
   end
 end
