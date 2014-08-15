@@ -98,6 +98,8 @@ module VagrantPlugins::Fsnotify
         @changes.delete(rel_path) if time < Time.now.to_i - 1
       end
 
+      tosync = {}
+
       paths.each do |hostpath, folder|
 
         modified.each do |file|
@@ -115,12 +117,18 @@ module VagrantPlugins::Fsnotify
             folder[:machine].ui.info("fsnotify: Changed: #{rel_path}")
 
             guestpath = File.join(folder[:opts][:guestpath], rel_path)
-            folder[:machine].communicate.execute("touch #{guestpath}")
+
+            tosync[folder[:machine]] = [] if !tosync.has_key?(folder[:machine])
+            tosync[folder[:machine]] << guestpath
 
           end
 
         end
 
+      end
+
+      tosync.each do |machine, files|
+        machine.communicate.execute("touch '#{files.join("' '")}'")
       end
 
     rescue => e
