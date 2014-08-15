@@ -109,7 +109,7 @@ module VagrantPlugins::Fsnotify
       @logger.info("  - Removed: #{removed.inspect}")
 
       @changes.each do |rel_path, time|
-        @changes.delete(rel_path) if time < Time.now.to_i - 1
+        @changes.delete(rel_path) if time < Time.now.to_i - 2
       end
 
       tosync = {}
@@ -122,8 +122,8 @@ module VagrantPlugins::Fsnotify
 
             rel_path =  file.sub(hostpath, '')
 
-            if @changes[rel_path] && @changes[rel_path] > Time.now.to_i - 1
-              @logger.info("#{rel_path} was changed less than a second ago, skipping")
+            if @changes[rel_path] && @changes[rel_path] >= Time.now.to_i - 2
+              @logger.info("#{rel_path} was changed less than two seconds ago, skipping")
               next
             end
 
