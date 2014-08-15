@@ -61,9 +61,11 @@ module VagrantPlugins::Fsnotify
       end
 
       if paths.empty?
-        return 0
+        @env.ui.info("Nothing to sync, exiting...")
+        return 1
       end
 
+      @logger.info("Listening to paths: #{paths.keys.sort.inspect}")
       @logger.info("Listening via: #{Listen::Adapter.select.inspect}")
       listener_callback = method(:callback).to_proc.curry[paths]
       listener = Listen.to(*paths.keys, &listener_callback)
