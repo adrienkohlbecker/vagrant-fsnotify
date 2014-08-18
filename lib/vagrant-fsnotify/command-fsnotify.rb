@@ -143,7 +143,7 @@ module VagrantPlugins::Fsnotify
       end
 
       tosync.each do |machine, files|
-        machine.communicate.execute("touch '#{files.join("' '")}'")
+        machine.communicate.execute("touch -a '#{files.join("' '")}'")
       end
 
     rescue => e
