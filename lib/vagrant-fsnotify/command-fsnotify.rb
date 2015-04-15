@@ -19,7 +19,7 @@ module VagrantPlugins::Fsnotify
       ignores = []
       @changes = {}
 
-      with_target_vms do |machine|
+      with_target_vms(argv) do |machine|
         if !machine.communicate.ready?
           machine.ui.error("Machine not ready, is it up?")
           return 1
