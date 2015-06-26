@@ -5,5 +5,5 @@ group :development do
 end
 
 group :plugins do
-  gemspec
+  gem "vagrant-fsnotify", path: "."
 end
