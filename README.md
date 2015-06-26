@@ -54,13 +54,13 @@ applications this is enough, but if other events (e.g. file creation or
 deletion) are necessary for your application, `vagrant-fsnotify` might not be
 for you.
 
-Due to the nature of filesystem events and the fact that `vagrant-fsnotify`
-uses `touch`, the events are triggerred back on the host a second time.
-To avoid infinite loops, we add an arbitrary debounce of 2 seconds between
-`touch`-ing the same file. Thus, if a file is modified on the host more than
-once in 2 seconds the VM will only see one notification.
-If the second trigger on the host or this arbitrary debounce is unacceptable for
-your application, `vagrant-fsnotify` might not be for you.
+Due to the nature of filesystem events and the fact that `vagrant-fsnotify` uses
+`touch`, the events are triggerred back on the host a second time.  To avoid
+infinite loops, we add an arbitrary debounce of 2 seconds between `touch`-ing
+the same file. Thus, if a file is modified on the host more than once in 2
+seconds the VM will only see one notification.  If the second trigger on the
+host or this arbitrary debounce is unacceptable for your application,
+`vagrant-fsnotify` might not be for you.
 
 Installation
 ------------
@@ -98,44 +98,50 @@ and forwards them to the guest virtual machine.
 
 ### Multi-VM environments
 
-In multi-VM environments, you can specify the name of the vms targetted
-by `vagrant-fsnotify` using:
+In multi-VM environments, you can specify the name of the VMs targeted by
+`vagrant-fsnotify` using:
 
 ```console
-$ vagrant fsnotify NAME1 NAME2 ...
+$ vagrant fsnotify <vm-name-1> <vm-name-2> ...
 ```
 
 ### Excluding files
 
 To exclude files or directories from being watched, you can add an `:exclude`
-option, which takes an array of strings (matched as a regexp against relative paths):
+option, which takes an array of strings (matched as a regexp against relative
+paths):
 
 ```ruby
-config.vm.synced_folder ".", "/vagrant", fsnotify: true, exclude: ["path1", "some/directory"]
+config.vm.synced_folder ".", "/vagrant", fsnotify: true,
+                                         exclude: ["path1", "some/directory"]
 ```
 
-This will exclude all files inside the `path1` and `some/directory`. It will also exclude
-files such as `another/directory/path1`
+This will exclude all files inside the `path1` and `some/directory`. It will
+also exclude files such as `another/directory/path1`
 
 ### Guest path override
 
-If your actual path on the VM is not the same as the one in `synced_folder`, for example
-when using [vagrant-bindfs](https://github.com/gael-ian/vagrant-bindfs), you can use
-the `:override_guestpath` option:
+If your actual path on the VM is not the same as the one in `synced_folder`, for
+example when using [`vagrant-bindfs`][vagrant-bindfs], you can use the
+`:override_guestpath` option:
 
 ```ruby
-config.vm.synced_folder ".", "/vagrant", fsnotify: true, override_guestpath: "/real/path"
+config.vm.synced_folder ".", "/vagrant", fsnotify: true,
+                                         override_guestpath: "/real/path"
 ```
 
-This will forward a notification on `./myfile` to `/real/path/myfile` instead of `/vagrant/myfile`.
+This will forward a notification on `./myfile` to `/real/path/myfile` instead of
+`/vagrant/myfile`.
 
 Original work
 -------------
 
-This plugin used [vagrant-rsync-back](https://github.com/smerrill/vagrant-rsync-back)
-by @smerill and the [Vagrant][vagrant] source code as a starting point.
+This plugin used [`vagrant-rsync-back`][vagrant-rsync-back] by @smerill and the
+[Vagrant][vagrant] source code as a starting point.
 
 [vagrant]: https://www.vagrantup.com/
 [jekyll]: http://jekyllrb.com/
 [guard]: http://guardgem.org/
 [forwarding-file-events-over-tcp]: https://github.com/guard/listen#forwarding-file-events-over-tcp
+[vagrant-bindfs]: https://github.com/gael-ian/vagrant-bindfs
+[vagrant-rsync-back]: https://github.com/smerrill/vagrant-rsync-back
