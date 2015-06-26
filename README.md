@@ -54,6 +54,14 @@ applications this is enough, but if other events (e.g. file creation or
 deletion) are necessary for your application, `vagrant-fsnotify` might not be
 for you.
 
+Due to the nature of filesystem events and the fact that `vagrant-fsnotify`
+uses `touch`, the events are triggerred back on the host a second time.
+To avoid infinite loops, we add an arbitrary delay of 2 seconds between `touch`-ing
+the same file. Thus, if a file is modified on the host more than once in
+2 seconds the VM will only see one notification.
+If the second trigger on the host or this aritrary delay is unacceptable for
+your application, `vagrant-fsnotify` might not be for you.
+
 Installation
 ------------
 
