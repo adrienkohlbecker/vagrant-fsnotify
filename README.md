@@ -94,6 +94,11 @@ $ vagrant fsnotify
 This starts the long running process that captures filesystem events on the host
 and forwards them to the guest virtual machine.
 
+Original work
+-------------
+
+This plugin used [vagrant-rsync-back](https://github.com/smerrill/vagrant-rsync-back)
+by @smerill and the [Vagrant][vagrant] source code as a starting point.
 
 [vagrant]: https://www.vagrantup.com/
 [jekyll]: http://jekyllrb.com/
