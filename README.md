@@ -56,10 +56,10 @@ for you.
 
 Due to the nature of filesystem events and the fact that `vagrant-fsnotify`
 uses `touch`, the events are triggerred back on the host a second time.
-To avoid infinite loops, we add an arbitrary delay of 2 seconds between `touch`-ing
-the same file. Thus, if a file is modified on the host more than once in
-2 seconds the VM will only see one notification.
-If the second trigger on the host or this aritrary delay is unacceptable for
+To avoid infinite loops, we add an arbitrary debounce of 2 seconds between
+`touch`-ing the same file. Thus, if a file is modified on the host more than
+once in 2 seconds the VM will only see one notification.
+If the second trigger on the host or this arbitrary debounce is unacceptable for
 your application, `vagrant-fsnotify` might not be for you.
 
 Installation
@@ -77,6 +77,8 @@ $ vagrant plugin install vagrant-fsnotify
 Usage
 -----
 
+### Basic setup
+
 In `Vagrantfile` synced folder configuration, add the `fsnotify: true`
 option. For example, in order to enable `vagrant-fsnotify` for the the default
 `/vagrant` shared folder, add the following:
@@ -93,6 +95,39 @@ $ vagrant fsnotify
 
 This starts the long running process that captures filesystem events on the host
 and forwards them to the guest virtual machine.
+
+### Multi-VM environments
+
+In multi-VM environments, you can specify the name of the vms targetted
+by `vagrant-fsnotify` using:
+
+```console
+$ vagrant fsnotify NAME1 NAME2 ...
+```
+
+### Excluding files
+
+To exclude files or directories from being watched, you can add an `:exclude`
+option, which takes an array of strings (matched as a regexp against relative paths):
+
+```ruby
+config.vm.synced_folder ".", "/vagrant", fsnotify: true, exclude: ["path1", "some/directory"]
+```
+
+This will exclude all files inside the `path1` and `some/directory`. It will also exclude
+files such as `another/directory/path1`
+
+### Guest path override
+
+If your actual path on the VM is not the same as the one in `synced_folder`, for example
+when using [vagrant-bindfs](https://github.com/gael-ian/vagrant-bindfs), you can use
+the `:override_guestpath` option:
+
+```ruby
+config.vm.synced_folder ".", "/vagrant", fsnotify: true, override_guestpath: "/real/path"
+```
+
+This will forward a notification on `./myfile` to `/real/path/myfile` instead of `/vagrant/myfile`.
 
 Original work
 -------------
