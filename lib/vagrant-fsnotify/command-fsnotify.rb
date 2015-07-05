@@ -29,7 +29,19 @@ module VagrantPlugins::Fsnotify
 
           folder.each do |id, opts|
 
-            next if not opts[:fsnotify]
+            if !(
+                (opts[:fsnotify] == true) ||
+                (
+                  opts[:fsnotify].respond_to?(:include?) &&
+                  (
+                    opts[:fsnotify].include?(:modified) ||
+                    opts[:fsnotify].include?(:added) ||
+                    opts[:fsnotify].include?(:removed)
+                  )
+                )
+              )
+              next
+            end
 
             # Folder info
             hostpath  = opts[:hostpath]
@@ -68,7 +80,27 @@ module VagrantPlugins::Fsnotify
       end
 
       if paths.empty?
-        @env.ui.info("Nothing to sync, exiting...")
+        @env.ui.info(<<-MESSAGE)
+Nothing to sync.
+
+Note that the valid values for the `:fsnotify' configuration key on
+`Vagrantfile' are either `true' (which forwards all kinds of filesystem events)
+or an Array containing symbols among the following options: `:modified',
+`:added' and `:removed' (in which case, only the specified filesystem events are
+forwarded).
+
+For example, to forward all filesystem events to the default `/vagrant' folder,
+add the following to the `Vagrantfile':
+
+  config.vm.synced_folder ".", "/vagrant", fsnotify: true
+
+And to forward only added files events to the default `/vagrant' folder, add the
+following to the `Vagrantfile':
+
+  config.vm.synced_folder ".", "/vagrant", fsnotify: [:added]
+
+Exiting...
+MESSAGE
         return 1
       end
 
@@ -113,10 +145,26 @@ module VagrantPlugins::Fsnotify
       end
 
       tosync = {}
+      todelete = []
 
       paths.each do |hostpath, folder|
 
-        modified.each do |file|
+        toanalyze = []
+        if folder[:opts][:fsnotify] == true
+          toanalyze += modified + added + removed
+        else
+          if folder[:opts][:fsnotify].include? :modified
+            toanalyze += modified
+          end
+          if folder[:opts][:fsnotify].include? :added
+            toanalyze += added
+          end
+          if folder[:opts][:fsnotify].include? :removed
+            toanalyze += removed
+          end
+        end
+
+        toanalyze.each do |file|
 
           if file.start_with?(hostpath)
 
@@ -128,7 +176,13 @@ module VagrantPlugins::Fsnotify
             end
 
             @changes[rel_path] = Time.now.to_i
-            folder[:machine].ui.info("fsnotify: Changed: #{rel_path}")
+            if modified.include? file
+              folder[:machine].ui.info("fsnotify: Changed: #{rel_path}")
+            elsif added.include? file
+              folder[:machine].ui.info("fsnotify: Added: #{rel_path}")
+            elsif removed.include? file
+              folder[:machine].ui.info("fsnotify: Removed: #{rel_path}")
+            end
 
             guestpath = folder[:opts][:override_guestpath] || folder[:opts][:guestpath]
             guestpath = File.join(guestpath, rel_path)
@@ -136,6 +190,9 @@ module VagrantPlugins::Fsnotify
             tosync[folder[:machine]] = [] if !tosync.has_key?(folder[:machine])
             tosync[folder[:machine]] << guestpath
 
+            if removed.include? file
+              todelete << guestpath
+            end
           end
 
         end
@@ -144,6 +201,10 @@ module VagrantPlugins::Fsnotify
 
       tosync.each do |machine, files|
         machine.communicate.execute("touch -a '#{files.join("' '")}'")
+        remove_from_this_machine = files & todelete
+        unless remove_from_this_machine.empty?
+          machine.communicate.execute("rm -rf '#{remove_from_this_machine.join("' '")}'")
+        end
       end
 
     rescue => e

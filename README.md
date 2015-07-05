@@ -40,19 +40,15 @@ Solution
 
 `vagrant-fsnotify` proposes a different solution: run a process listening for
 filesystem events on the host and, when a notification is received, access the
-virtual machine guest and `touch` the file in there, causing an event to be
-propagated on the guest filesystem.
+virtual machine guest and `touch` the file in there (or `touch` followed by a
+`rm` in case of file removals), causing an event to be propagated on the guest
+filesystem.
 
 This leverages the speed of using real filesystem events while still being
 general enough to don't require any support from applications.
 
 Caveats
 -------
-
-Only events of file modification are treated by `vagrant-fsnotify`. For most
-applications this is enough, but if other events (e.g. file creation or
-deletion) are necessary for your application, `vagrant-fsnotify` might not be
-for you.
 
 Due to the nature of filesystem events and the fact that `vagrant-fsnotify` uses
 `touch`, the events are triggerred back on the host a second time.  To avoid
@@ -132,6 +128,23 @@ config.vm.synced_folder ".", "/vagrant", fsnotify: true,
 
 This will forward a notification on `./myfile` to `/real/path/myfile` instead of
 `/vagrant/myfile`.
+
+### Select filesystem events
+
+By default, when the `:fsnotify` key in the `Vagrantfile` is configured with
+`true`, all filesystem events are forwarded to the VM (i.e. file creation,
+modification and removal events). If, instead, you want to select only a few of
+those events to be forwarded (e.g. you don't care about file removals), you can
+use an Array of Symbols among the following options: `:added`, `:modified` and
+`:removed`.
+
+For example, to forward only added files events to the default `/vagrant`
+folder, add the following to the `Vagrantfile`:
+
+```ruby
+config.vm.synced_folder ".", "/vagrant", fsnotify: [:added]
+```
+
 
 Original work
 -------------
