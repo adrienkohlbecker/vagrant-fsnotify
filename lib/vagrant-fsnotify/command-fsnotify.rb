@@ -4,6 +4,10 @@ module VagrantPlugins::Fsnotify
   class Command < Vagrant.plugin("2", :command)
     include Vagrant::Action::Builtin::MixinSyncedFolders
 
+    def self.synopsis
+      'forwards filesystem events to virtual machine'
+    end
+
     def execute
       @logger = Log4r::Logger.new("vagrant::commands::fsnotify")
 
