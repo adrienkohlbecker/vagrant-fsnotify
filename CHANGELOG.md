@@ -1,6 +1,10 @@
+0.1.1 - 2015-07-05
+==================
+- Added command synopsis (@leafac)
+- Fix issue with vagrant runtime dependency on celluloid (@leafac)
+
 0.1.0 - 2015-07-05
 ==================
-
 - *Breaking change:* Added support for forwading file addition/removal (@leafac)
 - Depend on `vagrant` rather than `listen` for better compatibility with upstream (@leafac)
 - Added documentation (@leafac)
