@@ -1,3 +1,8 @@
+0.2.0 - 2015-07-14
+==================
+- *Breaking change:* Minimum required Vagrant version changed to 1.7.3+
+- Fixed a dependency issue with celluloid (#10, @leafac)
+
 0.1.1 - 2015-07-05 (yanked)
 ===========================
 Note: This release was yanked due to a dependency issue, see #9
