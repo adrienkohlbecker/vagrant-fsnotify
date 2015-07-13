@@ -131,7 +131,7 @@ MESSAGE
       Vagrant::Util::Busy.busy(callback) do
         listener.start
         queue.pop
-        listener.stop if listener.listen?
+        listener.stop if listener.state != :stopped
       end
 
       return 0
