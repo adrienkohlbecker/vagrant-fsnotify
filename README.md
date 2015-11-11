@@ -68,7 +68,7 @@ running:
 $ vagrant plugin install vagrant-fsnotify
 ```
 
-[Vagrant][vagrant] version 1.5 or greater is required.
+[Vagrant][vagrant] version 1.7.3 or greater is required.
 
 Usage
 -----
