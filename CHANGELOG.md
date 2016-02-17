@@ -1,3 +1,7 @@
+0.3.0 - unreleased
+==================
+- Fix for "No such file or directory" on Windows host (#11)
+
 0.2.0 - 2015-07-14
 ==================
 - *Breaking change:* Minimum required Vagrant version changed to 1.7.3+

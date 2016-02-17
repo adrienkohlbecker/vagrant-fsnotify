@@ -52,11 +52,6 @@ module VagrantPlugins::Fsnotify
             hostpath  = File.expand_path(hostpath, machine.env.root_path)
             hostpath  = Vagrant::Util::Platform.fs_real_path(hostpath).to_s
 
-            if Vagrant::Util::Platform.windows?
-              # rsync for Windows expects cygwin style paths, always.
-              hostpath = Vagrant::Util::Platform.cygwin_path(hostpath)
-            end
-
             # Make sure the host path ends with a "/" to avoid creating
             # a nested directory...
             if !hostpath.end_with?("/")
