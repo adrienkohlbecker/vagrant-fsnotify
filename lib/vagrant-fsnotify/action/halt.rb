@@ -1,6 +1,6 @@
 require 'daemons'
 
-module VagrantPlugins::Uptime::Action
+module VagrantPlugins::Fsnotify::Action
   class Halt
     def initialize(app, env)
       @app = app
