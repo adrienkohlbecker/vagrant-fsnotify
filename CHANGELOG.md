@@ -1,4 +1,4 @@
-0.3.0 - unreleased
+0.3.0 - 2016-04-13
 ==================
 - Fix for "No such file or directory" on Windows host (#11)
 
