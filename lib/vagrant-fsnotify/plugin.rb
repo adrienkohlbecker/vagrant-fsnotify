@@ -22,6 +22,16 @@ module VagrantPlugins::Fsnotify
       Command
     end
 
+    action_hook("up", 'machine_action_up') do |hook|
+      require_relative "action/up"
+      hook.append(Action::Up)
+    end
+
+    action_hook("halt", 'machine_action_halt') do |hook|
+      require_relative "action/halt"
+      hook.prepend(Action::Halt)
+    end
+
   end
 
 end

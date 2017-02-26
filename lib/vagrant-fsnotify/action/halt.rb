@@ -1,4 +1,5 @@
 require 'daemons'
+require 'vagrant-fsnotify/daemon'
 
 module VagrantPlugins::Fsnotify::Action
   class Halt
@@ -7,14 +8,9 @@ module VagrantPlugins::Fsnotify::Action
     end
 
     def call(env)
+      VagrantPlugins::Fsnotify::Daemon.new(env).stop
+      env[:ui].info "Stopped fsnotify daemon."
       @app.call(env)
-      halt env
     end
-
-    protected
-      def halt(env)
-        task = VagrantPlugins::Fsnotify.task
-        task.stop
-      end
   end
 end

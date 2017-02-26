@@ -1,4 +1,5 @@
 require 'daemons'
+require 'vagrant-fsnotify/daemon'
 
 module VagrantPlugins::Fsnotify::Action
   class Up
@@ -7,17 +8,9 @@ module VagrantPlugins::Fsnotify::Action
     end
 
     def call(env)
-      up
+      VagrantPlugins::Fsnotify::Daemon.new(env).start
+      env[:ui].info "Started fsnotify daemon."
       @app.call(env)
     end
-
-    protected
-      def up
-        task = Daemons.call do
-          VagrantPlugins::Fsnotify::Command.execute
-        end
-        task.start
-        VagrantPlugins::Fsnotify.task = task
-      end
   end
 end
