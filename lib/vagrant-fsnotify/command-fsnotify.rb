@@ -199,7 +199,7 @@ MESSAGE
       end
 
       tosync.each do |machine, files|
-        machine.communicate.execute("touch -a '#{files.join("' '")}'")
+        machine.communicate.execute("touch -am '#{files.join("' '")}'")
         remove_from_this_machine = files & todelete
         unless remove_from_this_machine.empty?
           machine.communicate.execute("rm -rf '#{remove_from_this_machine.join("' '")}'")
