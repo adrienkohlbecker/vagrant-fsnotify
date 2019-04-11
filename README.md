@@ -158,6 +158,27 @@ folder, add the following to the `Vagrantfile`:
 config.vm.synced_folder ".", "/vagrant", fsnotify: [:added]
 ```
 
+Development
+-------------
+
+To hack on `vagrant-fsnotify`, you need a recent ruby and virtualbox installed.
+
+Then, after cloning the repo:
+```shell
+# install development gems
+bundle install
+
+# run vagrant commands by prefixing them with `bundle exec` to run with the plugin installed from source
+# this will launch a basic ubuntu VM and monitor file changes on the current directory
+bundle exec vagrant up
+
+# make changes to the code
+vim lib/vagrant-fsnotify/command-fsnotify.rb
+...
+
+# relaunch the process to activate your changes
+bundle exec vagrant fsnotify
+```
 
 Original work
 -------------
