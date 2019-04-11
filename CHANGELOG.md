@@ -1,3 +1,7 @@
+0.4.0 - 2019-04-11
+==================
+- Update mtime as well as atime to trigger file events on the guest (#28)
+
 0.3.0 - 2016-04-13
 ==================
 - Fix for "No such file or directory" on Windows host (#11)
