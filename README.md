@@ -92,6 +92,19 @@ $ vagrant fsnotify
 This starts the long running process that captures filesystem events on the host
 and forwards them to the guest virtual machine.
 
+### Run automatically on vagrant up
+
+To have `vagrant fsnotify` start automatically with your guest, you can use triggers. Add this to your `Vagrantfile`:
+
+```ruby
+  config.trigger.after :up do |t|
+    t.name = "vagrant-fsnotify"
+    t.run = { inline: "vagrant fsnotify" }
+  end
+```
+
+Now, whenever you run `vagrant up`, `vagrant fsnotify` will be run as well. Learn more at https://www.vagrantup.com/docs/triggers/
+
 ### Multi-VM environments
 
 In multi-VM environments, you can specify the name of the VMs targeted by
