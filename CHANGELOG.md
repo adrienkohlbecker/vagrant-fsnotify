@@ -1,4 +1,4 @@
-0.4.0 - 2019-04-11
+0.3.1 - 2019-04-11
 ==================
 - Update mtime as well as atime to trigger file events on the guest (#28)
 
