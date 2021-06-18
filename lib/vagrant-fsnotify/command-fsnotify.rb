@@ -199,7 +199,8 @@ MESSAGE
       end
 
       tosync.each do |machine, files|
-        machine.communicate.execute("touch -am '#{files.join("' '")}'")
+        touch_flags = get_touch_flags(machine.config.fsnotify.touch)
+        machine.communicate.execute("touch -#{touch_flags} '#{files.join("' '")}'")
         remove_from_this_machine = files & todelete
         unless remove_from_this_machine.empty?
           machine.communicate.execute("rm -rf '#{remove_from_this_machine.join("' '")}'")
@@ -223,5 +224,14 @@ MESSAGE
 
     end
 
+    def get_touch_flags(touch)
+      if touch.include? :modification and not touch.include? :access
+        return "m"
+      elsif not touch.include? :modification and touch.include? :access
+        return "a"
+      else
+        return "am"
+      end
+    end
   end
 end
