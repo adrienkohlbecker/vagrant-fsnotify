@@ -158,6 +158,26 @@ folder, add the following to the `Vagrantfile`:
 config.vm.synced_folder ".", "/vagrant", fsnotify: [:added]
 ```
 
+### Set touch flags
+
+By default, the touch command on the VM will be run with modification flag and access flag, setting
+both modification and access attributes of the file. If only either flag should be used the `:touch`
+param can be set per machine config in the `Vagrantfile`. The param supports an array with either or both 
+`:modification` and `:access` values. 
+
+As example, to only set the access attribute of files when they have changed on the host system set the following
+in the `Vagrantfile`:
+
+```ruby
+config.fsnotify.touch = [:access]
+```
+or for instances and providers
+```ruby
+config.vm.define "vm" do |instance|
+    instance.fsnotify.touch = [:access]
+end
+```
+
 Development
 -------------
 
