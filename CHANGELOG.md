@@ -1,4 +1,4 @@
-0.3.2 - 2021-06-18
+0.3.2 - 2021-07-12
 ==================
 - Add parameter to allow selection of touch flags
 
