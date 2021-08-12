@@ -14,19 +14,16 @@ end
 
 module VagrantPlugins::Fsnotify
 
-  class Plugin < Vagrant.plugin("2")
-    name "vagrant-fsnotify"
+  class Config < Vagrant.plugin("2", :config)
+    attr_accessor :touch
 
-    command "fsnotify" do
-      require_relative "command-fsnotify"
-      Command
+    def initialize
+      @touch = UNSET_VALUE
     end
 
-    config "fsnotify" do
-      require_relative "config-fsnotify"
-      Config
+    def finalize!
+      @touch = [:modification, :access] if @touch == UNSET_VALUE
     end
-
   end
 
 end
