@@ -1,6 +1,8 @@
 vagrant-fsnotify
 ================
 
+[![Gem](https://img.shields.io/gem/v/vagrant-fsnotify)](https://rubygems.org/gems/vagrant-fsnotify) [![Gem](https://img.shields.io/gem/dt/vagrant-fsnotify)](https://rubygems.org/gems/vagrant-fsnotify)
+
 Forward filesystem change notifications to your [Vagrant][vagrant] VM.
 
 Problem
@@ -162,8 +164,8 @@ config.vm.synced_folder ".", "/vagrant", fsnotify: [:added]
 
 By default, the touch command on the VM will be run with modification flag and access flag, setting
 both modification and access attributes of the file. If only either flag should be used the `:touch`
-param can be set per machine config in the `Vagrantfile`. The param supports an array with either or both 
-`:modification` and `:access` values. 
+param can be set per machine config in the `Vagrantfile`. The param supports an array with either or both
+`:modification` and `:access` values.
 
 As example, to only set the access attribute of files when they have changed on the host system set the following
 in the `Vagrantfile`:
